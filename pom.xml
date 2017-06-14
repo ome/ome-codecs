@@ -250,7 +250,7 @@
         <version>2.19.1</version>
         <configuration>
           <suiteXmlFiles>
-            <suiteXmlFile>src/test/java/loci/formats/utests/testng.xml</suiteXmlFile>
+            <suiteXmlFile>src/test/java/ome/codecs/utests/testng.xml</suiteXmlFile>
           </suiteXmlFiles>
         </configuration>
       </plugin>
