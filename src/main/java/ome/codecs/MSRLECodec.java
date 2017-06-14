@@ -35,7 +35,7 @@ package ome.codecs;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
-import ome.codecs.FormatException;
+import ome.codecs.CodecException;
 import ome.codecs.UnsupportedCompressionException;
 
 /**
@@ -46,7 +46,7 @@ public class MSRLECodec extends BaseCodec {
   /* @see Codec#compress(byte[], CodecOptions) */
   @Override
   public byte[] compress(byte[] data, CodecOptions options)
-    throws FormatException
+    throws CodecException
   {
     throw new UnsupportedCompressionException(
       "MSRLE compression not supported.");
@@ -62,7 +62,7 @@ public class MSRLECodec extends BaseCodec {
    */
   @Override
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
-    throws FormatException, IOException
+    throws CodecException, IOException
   {
     if (in == null) 
       throw new IllegalArgumentException("No data to decompress.");

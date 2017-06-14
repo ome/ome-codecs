@@ -37,7 +37,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
-import ome.codecs.FormatException;
+import ome.codecs.CodecException;
 import ome.codecs.UnsupportedCompressionException;
 
 /**
@@ -51,7 +51,7 @@ public class TargaRLECodec extends BaseCodec {
   /* @see Codec#compress(byte[], CodecOptions) */
   @Override
   public byte[] compress(byte[] data, CodecOptions options)
-    throws FormatException
+    throws CodecException
   {
     // TODO: Add compression support.
     throw new UnsupportedCompressionException(
@@ -67,7 +67,7 @@ public class TargaRLECodec extends BaseCodec {
    */
   @Override
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
-    throws FormatException, IOException
+    throws CodecException, IOException
   {
     if (in == null) 
       throw new IllegalArgumentException("No data to decompress.");

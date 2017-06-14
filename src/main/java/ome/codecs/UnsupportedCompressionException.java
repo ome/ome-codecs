@@ -36,7 +36,7 @@ package ome.codecs;
  * UnsupportedCompressionException is the exception thrown when the compression
  * scheme used in a particular file or stream is unsupported.
  */
-public class UnsupportedCompressionException extends FormatException {
+public class UnsupportedCompressionException extends CodecException {
 
   public UnsupportedCompressionException() { super(); }
   public UnsupportedCompressionException(String s) { super(s); }

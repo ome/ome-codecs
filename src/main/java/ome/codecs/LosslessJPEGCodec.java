@@ -38,7 +38,7 @@ import java.util.Vector;
 import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
-import ome.codecs.FormatException;
+import ome.codecs.CodecException;
 import ome.codecs.UnsupportedCompressionException;
 
 /**
@@ -100,7 +100,7 @@ public class LosslessJPEGCodec extends BaseCodec {
   /* @see Codec#compress(byte[], CodecOptions) */
   @Override
   public byte[] compress(byte[] data, CodecOptions options)
-    throws FormatException
+    throws CodecException
   {
     throw new UnsupportedCompressionException(
       "Lossless JPEG compression not supported");
@@ -115,7 +115,7 @@ public class LosslessJPEGCodec extends BaseCodec {
    */
   @Override
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
-    throws FormatException, IOException
+    throws CodecException, IOException
   {
     if (in == null) 
       throw new IllegalArgumentException("No data to decompress.");

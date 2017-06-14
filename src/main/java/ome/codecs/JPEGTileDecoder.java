@@ -42,7 +42,7 @@ import java.util.Hashtable;
 
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
-import ome.codecs.FormatException;
+import ome.codecs.CodecException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,7 +153,7 @@ public class JPEGTileDecoder {
     try {
       return tiles.get(0, y, consumer.getWidth(), 1);
     }
-    catch (FormatException e) {
+    catch (CodecException e) {
       LOGGER.debug("", e);
     }
     catch (IOException e) {
@@ -238,7 +238,7 @@ public class JPEGTileDecoder {
       try {
         tiles.add(pixels, x, y, w, h);
       }
-      catch (FormatException e) {
+      catch (CodecException e) {
         LOGGER.debug("", e);
       }
       catch (IOException e) {
@@ -260,7 +260,7 @@ public class JPEGTileDecoder {
       try {
         tiles.add(pixels, x, y, w, h);
       }
-      catch (FormatException e) {
+      catch (CodecException e) {
         LOGGER.debug("", e);
       }
       catch (IOException e) {
@@ -300,7 +300,7 @@ public class JPEGTileDecoder {
     }
 
     public void add(byte[] pixels, int x, int y, int w, int h)
-      throws FormatException, IOException
+      throws CodecException, IOException
     {
       toCompress.add(pixels);
       row++;
@@ -322,7 +322,7 @@ public class JPEGTileDecoder {
     }
 
     public void add(int[] pixels, int x, int y, int w, int h)
-      throws FormatException, IOException
+      throws CodecException, IOException
     {
       byte[] buf = new byte[pixels.length * 3];
       for (int i=0; i<pixels.length; i++) {
@@ -352,7 +352,7 @@ public class JPEGTileDecoder {
     }
 
     public byte[] get(int x, int y, int w, int h)
-      throws FormatException, IOException
+      throws CodecException, IOException
     {
       Region[] keys = compressedTiles.keySet().toArray(new Region[0]);
       Region r = new Region(x, y, w, h);

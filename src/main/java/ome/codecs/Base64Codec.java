@@ -35,7 +35,7 @@ package ome.codecs;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
-import ome.codecs.FormatException;
+import ome.codecs.CodecException;
 
 /**
  * Implements encoding (compress) and decoding (decompress) methods
@@ -80,7 +80,7 @@ public class Base64Codec extends BaseCodec {
   /* @see Codec#compress(byte[], CodecOptions) */
   @Override
   public byte[] compress(byte[] input, CodecOptions options)
-    throws FormatException
+    throws CodecException
   {
     if (input == null || input.length == 0) return null;
     int dataBits = input.length * 8;
@@ -149,7 +149,7 @@ public class Base64Codec extends BaseCodec {
   /* @see Codec#decompress(RandomAccessInputStream, CodecOptions) */
   @Override
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
-    throws FormatException, IOException
+    throws CodecException, IOException
   {
     if (in == null)
       throw new IllegalArgumentException("No data to decompress.");

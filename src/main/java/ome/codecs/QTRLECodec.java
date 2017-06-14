@@ -36,7 +36,7 @@ import java.io.IOException;
 
 import loci.common.ByteArrayHandle;
 import loci.common.RandomAccessInputStream;
-import ome.codecs.FormatException;
+import ome.codecs.CodecException;
 import ome.codecs.UnsupportedCompressionException;
 
 /**
@@ -47,7 +47,7 @@ public class QTRLECodec extends BaseCodec {
   /* @see Codec#compress(byte[], CodecOptions) */
   @Override
   public byte[] compress(byte[] data, CodecOptions options)
-    throws FormatException
+    throws CodecException
   {
     throw new UnsupportedCompressionException(
       "QTRLE compression not supported.");
@@ -56,7 +56,7 @@ public class QTRLECodec extends BaseCodec {
   /* @see Codec#decompress(RandomAccessInputStream, CodecOptions) */
   @Override
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
-    throws FormatException, IOException
+    throws CodecException, IOException
   {
     if (in == null) 
       throw new IllegalArgumentException("No data to decompress.");
@@ -76,7 +76,7 @@ public class QTRLECodec extends BaseCodec {
    */
   @Override
   public byte[] decompress(byte[] data, CodecOptions options)
-    throws FormatException
+    throws CodecException
   {
     if (options == null) options = CodecOptions.getDefaultOptions();
     if (data == null || data.length == 0)
@@ -119,7 +119,7 @@ public class QTRLECodec extends BaseCodec {
           }
         }
       }
-      else throw new FormatException("Unsupported header : " + header);
+      else throw new CodecException("Unsupported header : " + header);
 
       // uncompress remaining lines
 
@@ -195,7 +195,7 @@ public class QTRLECodec extends BaseCodec {
       return output;
     }
     catch (IOException e) {
-      throw new FormatException(e);
+      throw new CodecException(e);
     }
   }
 

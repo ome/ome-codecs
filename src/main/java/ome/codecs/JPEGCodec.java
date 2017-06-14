@@ -43,7 +43,7 @@ import javax.imageio.ImageIO;
 
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
-import ome.codecs.FormatException;
+import ome.codecs.CodecException;
 import ome.codecs.gui.AWTImageTools;
 
 /**
@@ -65,13 +65,13 @@ public class JPEGCodec extends BaseCodec {
    */
   @Override
   public byte[] compress(byte[] data, CodecOptions options)
-    throws FormatException
+    throws CodecException
   {
     if (data == null || data.length == 0) return data;
     if (options == null) options = CodecOptions.getDefaultOptions();
 
     if (options.bitsPerSample > 8) {
-      throw new FormatException("> 8 bit data cannot be compressed with JPEG.");
+      throw new CodecException("> 8 bit data cannot be compressed with JPEG.");
     }
 
     ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -83,7 +83,7 @@ public class JPEGCodec extends BaseCodec {
       ImageIO.write(img, "jpeg", out);
     }
     catch (IOException e) {
-      throw new FormatException("Could not write JPEG data", e);
+      throw new CodecException("Could not write JPEG data", e);
     }
     return out.toByteArray();
   }
@@ -97,7 +97,7 @@ public class JPEGCodec extends BaseCodec {
    */
   @Override
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
-    throws FormatException, IOException
+    throws CodecException, IOException
   {
     BufferedImage b;
     long fp = in.getFilePointer();

@@ -33,15 +33,15 @@
 package ome.codecs;
 
 /**
- * FormatException is the exception thrown when something
+ * CodecException is the exception thrown when something
  * goes wrong performing a file format operation.
  */
-public class FormatException extends Exception {
+public class CodecException extends Exception {
 
-  public FormatException() { super(); }
-  public FormatException(String s) { super(s); }
-  public FormatException(String s, Throwable cause) { super(s, cause); }
-  public FormatException(Throwable cause) { super(cause); }
+  public CodecException() { super(); }
+  public CodecException(String s) { super(s); }
+  public CodecException(String s, Throwable cause) { super(s, cause); }
+  public CodecException(Throwable cause) { super(cause); }
 
 }
 

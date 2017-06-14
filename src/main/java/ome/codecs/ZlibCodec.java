@@ -38,7 +38,7 @@ import java.util.zip.Deflater;
 import java.util.zip.InflaterInputStream;
 
 import loci.common.RandomAccessInputStream;
-import ome.codecs.FormatException;
+import ome.codecs.CodecException;
 
 /**
  * This class implements ZLIB decompression.
@@ -50,7 +50,7 @@ public class ZlibCodec extends BaseCodec {
   /* @see Codec#compress(byte[], CodecOptions) */
   @Override
   public byte[] compress(byte[] data, CodecOptions options)
-    throws FormatException
+    throws CodecException
   {
     if (data == null || data.length == 0)
       throw new IllegalArgumentException("No data to compress");
@@ -70,7 +70,7 @@ public class ZlibCodec extends BaseCodec {
   /* @see Codec#decompress(RandomAccessInputStream, CodecOptions) */
   @Override
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
-    throws FormatException, IOException
+    throws CodecException, IOException
   {
     InflaterInputStream i = new InflaterInputStream(in);
     ByteVector bytes = new ByteVector();

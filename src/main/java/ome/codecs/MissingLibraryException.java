@@ -36,7 +36,7 @@ package ome.codecs;
  * MissingLibraryException is the exception thrown when a particular data
  * stream or filename requires a library that is not present on the system.
  */
-public class MissingLibraryException extends FormatException {
+public class MissingLibraryException extends CodecException {
 
   public MissingLibraryException() { super(); }
   public MissingLibraryException(String s) { super(s); }

@@ -35,7 +35,7 @@ package ome.codecs;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
-import ome.codecs.FormatException;
+import ome.codecs.CodecException;
 
 /**
  * A codec which just returns the exact data it was given, performing no
@@ -48,7 +48,7 @@ public class PassthroughCodec extends BaseCodec {
    */
   @Override
   public byte[] decompress(byte[] data, CodecOptions options)
-      throws FormatException {
+      throws CodecException {
     return data;
   }
 
@@ -57,7 +57,7 @@ public class PassthroughCodec extends BaseCodec {
    */
   @Override
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
-      throws FormatException, IOException {
+      throws CodecException, IOException {
     throw new RuntimeException("Not implemented.");
   }
 
@@ -66,7 +66,7 @@ public class PassthroughCodec extends BaseCodec {
    */
   @Override
   public byte[] compress(byte[] data, CodecOptions options)
-      throws FormatException {
+      throws CodecException {
     return data;
   }
 

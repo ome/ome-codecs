@@ -36,7 +36,7 @@ import java.io.IOException;
 import java.util.Random;
 
 import loci.common.RandomAccessInputStream;
-import ome.codecs.FormatException;
+import ome.codecs.CodecException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,10 +66,10 @@ public abstract class BaseCodec implements Codec {
    * This method tests whether the data is the same after compressing and
    * decompressing, as well as doing a basic test of the 2D methods.
    *
-   * @throws FormatException Can only occur if there is a bug in the
+   * @throws CodecException Can only occur if there is a bug in the
    *   compress method.
    */
-  public void test() throws FormatException {
+  public void test() throws CodecException {
     byte[] testdata = new byte[50000];
     Random r = new Random();
     LOGGER.info("Testing {}", this.getClass().getName());
@@ -137,12 +137,12 @@ public abstract class BaseCodec implements Codec {
    * @param data The data to be compressed.
    * @param options Options to be used during compression, if appropriate.
    * @return The compressed data.
-   * @throws FormatException If input is not a compressed data block of the
+   * @throws CodecException If input is not a compressed data block of the
    *   appropriate type.
    */
   @Override
   public byte[] compress(byte[][] data, CodecOptions options)
-    throws FormatException
+    throws CodecException
   {
     int len = 0;
     for (int i = 0; i < data.length; i++) {
@@ -159,20 +159,20 @@ public abstract class BaseCodec implements Codec {
 
   /* @see Codec#decompress(byte[]) */
   @Override
-  public byte[] decompress(byte[] data) throws FormatException {
+  public byte[] decompress(byte[] data) throws CodecException {
     return decompress(data, null);
   }
 
   /* @see Codec#decompress(byte[][]) */
   @Override
-  public byte[] decompress(byte[][] data) throws FormatException {
+  public byte[] decompress(byte[][] data) throws CodecException {
     return decompress(data, null);
   }
 
   /* @see Codec#decompress(byte[], CodecOptions) */
   @Override
   public byte[] decompress(byte[] data, CodecOptions options)
-    throws FormatException
+    throws CodecException
   {
     try {
       RandomAccessInputStream r = new RandomAccessInputStream(data);
@@ -181,14 +181,14 @@ public abstract class BaseCodec implements Codec {
       return t;
     }
     catch (IOException e) {
-      throw new FormatException(e);
+      throw new CodecException(e);
     }
   }
 
   /* @see Codec#decompress(RandomAccessInputStream, CodecOptions) */
   @Override
   public abstract byte[] decompress(RandomAccessInputStream in,
-    CodecOptions options) throws FormatException, IOException;
+    CodecOptions options) throws CodecException, IOException;
 
   /**
    * 2D data block decoding default implementation.
@@ -197,12 +197,12 @@ public abstract class BaseCodec implements Codec {
    *
    * @param data The data to be decompressed.
    * @return The decompressed data.
-   * @throws FormatException If input is not a compressed data block of the
+   * @throws CodecException If input is not a compressed data block of the
    *   appropriate type.
    */
   @Override
   public byte[] decompress(byte[][] data, CodecOptions options)
-    throws FormatException
+    throws CodecException
   {
     if (data == null)
       throw new IllegalArgumentException("No data to decompress.");

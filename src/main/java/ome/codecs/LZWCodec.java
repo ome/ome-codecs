@@ -37,7 +37,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import loci.common.RandomAccessInputStream;
-import ome.codecs.FormatException;
+import ome.codecs.CodecException;
 
 /**
  * This is an optimized LZW codec for use with TIFF files.
@@ -103,14 +103,14 @@ public class LZWCodec extends BaseCodec {
   /* @see Codec#compress(byte[], CodecOptions) */
   @Override
   public byte[] compress(byte[] input, CodecOptions options)
-    throws FormatException
+    throws CodecException
   {
     if (input == null || input.length == 0) return input;
 
     // Output buffer (see class comments for justification of size).
     long bufferSize = ((long) input.length * 141) / 100 + 3;
     if (bufferSize > Integer.MAX_VALUE) {
-      throw new FormatException("Output buffer is greater than 2 GB");
+      throw new CodecException("Output buffer is greater than 2 GB");
     }
     byte[] output = new byte[(int) bufferSize];
 
@@ -260,7 +260,7 @@ public class LZWCodec extends BaseCodec {
    */
   @Override
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
-    throws FormatException, IOException
+    throws CodecException, IOException
   {
     if (in == null || in.length() == 0) return null;
     if (options == null) options = CodecOptions.getDefaultOptions();
@@ -404,7 +404,7 @@ public class LZWCodec extends BaseCodec {
       } while (currOutPos < output.length && in.getFilePointer() < in.length());
     }
     catch (ArrayIndexOutOfBoundsException e) {
-      throw new FormatException("Invalid LZW data", e);
+      throw new CodecException("Invalid LZW data", e);
     }
     catch (EOFException e) { }
     return output;

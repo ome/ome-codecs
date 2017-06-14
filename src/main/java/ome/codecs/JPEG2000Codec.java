@@ -47,7 +47,7 @@ import loci.common.RandomAccessOutputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
-import ome.codecs.FormatException;
+import ome.codecs.CodecException;
 import ome.codecs.MissingLibraryException;
 import ome.codecs.gui.AWTImageTools;
 import ome.codecs.gui.UnsignedIntBuffer;
@@ -82,7 +82,7 @@ public class JPEG2000Codec extends BaseCodec {
    */
   @Override
   public byte[] compress(byte[] data, CodecOptions options)
-    throws FormatException
+    throws CodecException
   {
     if (data == null || data.length == 0) return data;
     initialize();
@@ -191,17 +191,17 @@ public class JPEG2000Codec extends BaseCodec {
       service.writeImage(out, img, j2kOptions);
     }
     catch (IOException e) {
-      throw new FormatException("Could not compress JPEG-2000 data.", e);
+      throw new CodecException("Could not compress JPEG-2000 data.", e);
     }
     catch (ServiceException e) {
-      throw new FormatException("Could not compress JPEG-2000 data.", e);
+      throw new CodecException("Could not compress JPEG-2000 data.", e);
     }
     finally {
       try {
         out.close();
       }
       catch (IOException e) {
-        throw new FormatException("Failed to close RandomAccessOutputStream.", e);
+        throw new CodecException("Failed to close RandomAccessOutputStream.", e);
       }
     }
 
@@ -246,7 +246,7 @@ public class JPEG2000Codec extends BaseCodec {
    */
   @Override
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
-    throws FormatException, IOException
+    throws CodecException, IOException
   {
     if (in == null) {
       throw new IllegalArgumentException("No data to decompress.");
@@ -276,7 +276,7 @@ public class JPEG2000Codec extends BaseCodec {
    */
   @Override
   public byte[] decompress(byte[] buf, CodecOptions options)
-    throws FormatException
+    throws CodecException
   {
     initialize();
 
@@ -302,11 +302,11 @@ public class JPEG2000Codec extends BaseCodec {
       b = null;
     }
     catch (IOException e) {
-      throw new FormatException("Could not decompress JPEG2000 image. Please " +
+      throw new CodecException("Could not decompress JPEG2000 image. Please " +
         "make sure that jai_imageio.jar is installed.", e);
     }
     catch (ServiceException e) {
-      throw new FormatException("Could not decompress JPEG2000 image. Please " +
+      throw new CodecException("Could not decompress JPEG2000 image. Please " +
         "make sure that jai_imageio.jar is installed.", e);
     }
 
@@ -341,10 +341,10 @@ public class JPEG2000Codec extends BaseCodec {
    * avoid having the constructor's method definition contain a checked
    * exception.
    *
-   * @throws FormatException If there is an error initializing JAI ImageIO
+   * @throws CodecException If there is an error initializing JAI ImageIO
    *   services.
    */
-  private void initialize() throws FormatException {
+  private void initialize() throws CodecException {
     if (service != null) return;
     try {
       ServiceFactory factory = new ServiceFactory();

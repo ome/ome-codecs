@@ -35,7 +35,7 @@ package ome.codecs;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
-import ome.codecs.FormatException;
+import ome.codecs.CodecException;
 
 /**
  * This class is an interface for any kind of compression or decompression.
@@ -62,10 +62,10 @@ public interface Codec {
    * @param data The data to be compressed.
    * @param options Options to be used during compression, if appropriate.
    * @return The compressed data.
-   * @throws FormatException If input is not a compressed data block of the
+   * @throws CodecException If input is not a compressed data block of the
    *   appropriate type.
    */
-  byte[] compress(byte[] data, CodecOptions options) throws FormatException;
+  byte[] compress(byte[] data, CodecOptions options) throws CodecException;
 
   /**
    * Compresses a block of data.
@@ -73,10 +73,10 @@ public interface Codec {
    * @param data The data to be compressed.
    * @param options Options to be used during compression, if appropriate.
    * @return The compressed data.
-   * @throws FormatException If input is not a compressed data block of the
+   * @throws CodecException If input is not a compressed data block of the
    *   appropriate type.
    */
-  byte[] compress(byte[][] data, CodecOptions options) throws FormatException;
+  byte[] compress(byte[][] data, CodecOptions options) throws CodecException;
 
   /**
    * Decompresses a block of data.
@@ -84,9 +84,9 @@ public interface Codec {
    * @param data the data to be decompressed
    * @param options Options to be used during decompression.
    * @return the decompressed data.
-   * @throws FormatException If data is not valid.
+   * @throws CodecException If data is not valid.
    */
-  byte[] decompress(byte[] data, CodecOptions options) throws FormatException;
+  byte[] decompress(byte[] data, CodecOptions options) throws CodecException;
 
   /**
    * Decompresses a block of data.
@@ -94,29 +94,29 @@ public interface Codec {
    * @param data the data to be decompressed
    * @param options Options to be used during decompression.
    * @return the decompressed data.
-   * @throws FormatException If data is not valid.
+   * @throws CodecException If data is not valid.
    */
-  byte[] decompress(byte[][] data, CodecOptions options) throws FormatException;
+  byte[] decompress(byte[][] data, CodecOptions options) throws CodecException;
 
   /**
    * Decompresses a block of data.
    *
    * @param data the data to be decompressed.
    * @return The decompressed data.
-   * @throws FormatException If data is not valid compressed data for this
+   * @throws CodecException If data is not valid compressed data for this
    *   decompressor.
    */
-  byte[] decompress(byte[] data) throws FormatException;
+  byte[] decompress(byte[] data) throws CodecException;
 
   /**
    * Decompresses a block of data.
    *
    * @param data The data to be decompressed.
    * @return The decompressed data.
-   * @throws FormatException If data is not valid compressed data for this
+   * @throws CodecException If data is not valid compressed data for this
    *   decompressor.
    */
-  byte[] decompress(byte[][] data) throws FormatException;
+  byte[] decompress(byte[][] data) throws CodecException;
 
   /**
    * Decompresses data from the given RandomAccessInputStream.
@@ -124,10 +124,10 @@ public interface Codec {
    * @param in The stream from which to read compressed data.
    * @param options Options to be used during decompression.
    * @return The decompressed data.
-   * @throws FormatException If data is not valid compressed data for this
+   * @throws CodecException If data is not valid compressed data for this
    *   decompressor.
    */
   byte[] decompress(RandomAccessInputStream in, CodecOptions options)
-    throws FormatException, IOException;
+    throws CodecException, IOException;
 
 }

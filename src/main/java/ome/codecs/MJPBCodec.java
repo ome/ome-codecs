@@ -35,7 +35,7 @@ package ome.codecs;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
-import ome.codecs.FormatException;
+import ome.codecs.CodecException;
 import ome.codecs.UnsupportedCompressionException;
 
 /**
@@ -55,7 +55,7 @@ public class MJPBCodec extends BaseCodec {
   /* @see Codec#compress(byte[], CodecOptions) */
   @Override
   public byte[] compress(byte[] data, CodecOptions options)
-    throws FormatException
+    throws CodecException
   {
     throw new UnsupportedCompressionException(
       "Motion JPEG-B compression not supported.");
@@ -75,11 +75,11 @@ public class MJPBCodec extends BaseCodec {
    */
   @Override
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
-    throws FormatException, IOException
+    throws CodecException, IOException
   {
     if (options == null) options = CodecOptions.getDefaultOptions();
     if (!(options instanceof MJPBCodecOptions)) {
-      throw new FormatException("Options must be an instance of " +
+      throw new CodecException("Options must be an instance of " +
         "ome.codecs.MJPBCodecOptions");
     }
 
@@ -342,7 +342,7 @@ public class MJPBCodec extends BaseCodec {
       }
     }
     catch (IOException e) {
-      throw new FormatException(e);
+      throw new CodecException(e);
     }
   }
 

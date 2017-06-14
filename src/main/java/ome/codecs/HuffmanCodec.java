@@ -37,7 +37,7 @@ import java.util.HashMap;
 
 import loci.common.ByteArrayHandle;
 import loci.common.RandomAccessInputStream;
-import ome.codecs.FormatException;
+import ome.codecs.CodecException;
 import ome.codecs.UnsupportedCompressionException;
 
 /**
@@ -63,7 +63,7 @@ public class HuffmanCodec extends BaseCodec {
   /* @see Codec#compress(byte[], CodecOptions) */
   @Override
   public byte[] compress(byte[] data, CodecOptions options)
-    throws FormatException
+    throws CodecException
   {
     throw new UnsupportedCompressionException(
       "Huffman encoding not currently supported");
@@ -80,12 +80,12 @@ public class HuffmanCodec extends BaseCodec {
    */
   @Override
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
-    throws FormatException, IOException
+    throws CodecException, IOException
   {
     if (in == null) 
       throw new IllegalArgumentException("No data to decompress.");
     if (options == null || !(options instanceof HuffmanCodecOptions)) {
-      throw new FormatException("Options must be an instance of " +
+      throw new CodecException("Options must be an instance of " +
         "ome.codecs.HuffmanCodecOptions.");
     }
 
@@ -109,7 +109,7 @@ public class HuffmanCodec extends BaseCodec {
 
   @Deprecated
   public int getSample(BitBuffer bb, CodecOptions options)
-    throws FormatException
+    throws CodecException
   {
     RandomAccessInputStream s = null;
     try {
@@ -122,18 +122,18 @@ public class HuffmanCodec extends BaseCodec {
       }
     }
     catch (IOException e) {
-      throw new FormatException(e);
+      throw new CodecException(e);
     }
   }
 
   public int getSample(RandomAccessInputStream bb, CodecOptions options)
-    throws FormatException
+    throws CodecException
   {
     if (bb == null) {
       throw new IllegalArgumentException("No data to handle.");
     }
     if (options == null || !(options instanceof HuffmanCodecOptions)) {
-      throw new FormatException("Options must be an instance of " +
+      throw new CodecException("Options must be an instance of " +
         "ome.codecs.HuffmanCodecOptions.");
     }
 
@@ -157,7 +157,7 @@ public class HuffmanCodec extends BaseCodec {
       return v;
     }
     catch (IOException e) {
-      throw new FormatException(e);
+      throw new CodecException(e);
     }
   }
 
