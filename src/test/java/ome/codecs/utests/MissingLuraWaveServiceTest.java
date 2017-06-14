@@ -30,12 +30,12 @@
  * #L%
  */
 
-package loci.formats.utests;
+package ome.codecs.utests;
 
 import static org.testng.AssertJUnit.assertNotNull;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceFactory;
-import loci.formats.services.JAIIIOService;
+import ome.codecs.services.LuraWaveService;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -44,7 +44,7 @@ import org.testng.annotations.Test;
  *
  * @author Chris Allan <callan at blackcat dot ca>
  */
-public class MissingJAIIIOServiceTest {
+public class MissingLuraWaveServiceTest {
 
   private ServiceFactory sf;
 
@@ -55,7 +55,7 @@ public class MissingJAIIIOServiceTest {
 
   @Test(expectedExceptions={DependencyException.class})
   public void testInstantiate() throws DependencyException {
-    JAIIIOService service = sf.getInstance(JAIIIOService.class);
+    LuraWaveService service = sf.getInstance(LuraWaveService.class);
     assertNotNull(service);
   }
 

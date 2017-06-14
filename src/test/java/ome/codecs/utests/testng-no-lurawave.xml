@@ -29,11 +29,11 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
-<suite name="Missing JAI ImageIO Service Tests">
-    <test name="MissingJAIIIOService">
+<suite name="Missing LuraWave Service Tests">
+    <test name="MissingLuraWaveService">
         <groups/>
         <classes>
-            <class name="loci.formats.utests.MissingJAIIIOServiceTest"/>
+            <class name="ome.codecs.utests.MissingLuraWaveServiceTest"/>
         </classes>
         <packages/>
     </test>

@@ -29,15 +29,12 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
-<suite name="Formats-BSD Unit Tests">
-    <test name="ServiceTests">
+<suite name="Missing JAI ImageIO Service Tests">
+    <test name="MissingJAIIIOService">
         <groups/>
         <classes>
-            <class name="loci.formats.utests.JAIIIOServiceTest"/>
-            <class name="loci.formats.utests.LuraWaveServiceTest"/>
+            <class name="ome.codecs.utests.MissingJAIIIOServiceTest"/>
         </classes>
-        <packages>
-            <package name="loci.formats.utests.xml"/>
-        </packages>
+        <packages/>
     </test>
 </suite>

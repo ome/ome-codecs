@@ -30,7 +30,7 @@
  * #L%
  */
 
-package loci.formats.utests;
+package ome.codecs.utests;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -38,7 +38,7 @@ import java.io.IOException;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
-import loci.formats.services.LuraWaveService;
+import ome.codecs.services.LuraWaveService;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

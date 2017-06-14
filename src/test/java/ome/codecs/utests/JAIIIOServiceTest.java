@@ -30,7 +30,7 @@
  * #L%
  */
 
-package loci.formats.utests;
+package ome.codecs.utests;
 
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
@@ -54,8 +54,8 @@ import java.io.IOException;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
-import loci.formats.codec.JPEG2000CodecOptions;
-import loci.formats.services.JAIIIOService;
+import ome.codecs.JPEG2000CodecOptions;
+import ome.codecs.services.JAIIIOService;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
