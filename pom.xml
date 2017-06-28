@@ -150,9 +150,9 @@
       <version>1.1.1</version>
     </dependency>
     <dependency>
-      <groupId>ome</groupId>
-      <artifactId>jai_imageio</artifactId>
-      <version>${imageio.version}</version>
+      <groupId>org.openmicroscopy</groupId>
+      <artifactId>ome-jai</artifactId>
+      <version>0.1.0</version>
     </dependency>
     <dependency>
       <groupId>org.openmicroscopy</groupId>
