@@ -32,26 +32,16 @@
     </developer>
   </developers>
   <contributors>
-    <contributor><name>Chris Allan</name></contributor>
+    <contributor><name>Aaron Avery</name></contributor>
     <contributor><name>Sébastien Besson</name></contributor>
     <contributor><name>Jean-Marie Burel</name></contributor>
-    <contributor><name>Ghislain Bonamy</name></contributor>
     <contributor><name>Mark Carroll</name></contributor>
-    <contributor><name>Stéphane Dallongeville</name></contributor>
-    <contributor><name>Helen Flynn</name></contributor>
     <contributor><name>David Gault</name></contributor>
-    <contributor><name>Mark Hiner</name></contributor>
     <contributor><name>Simone Leo</name></contributor>
     <contributor><name>Roger Leigh</name></contributor>
     <contributor><name>Melissa Linkert</name></contributor>
-    <contributor><name>Allison McArton</name></contributor>
-    <contributor><name>Josh Moore</name></contributor>
-    <contributor><name>Andrew Patterson</name></contributor>
     <contributor><name>Blazej Pindelski</name></contributor>
-    <contributor><name>Balaji Ramalingam</name></contributor>
     <contributor><name>Curtis Rueden</name></contributor>
-    <contributor><name>Christoph Sommer</name></contributor>
-    <contributor><name>Bjoern Thiel</name></contributor>
   </contributors>
 
   <mailingLists>
