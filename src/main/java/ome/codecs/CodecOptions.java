@@ -1,6 +1,6 @@
 /*
  * #%L
- * Top-level reader and writer APIs
+ * Image encoding and decoding routines.
  * %%
  * Copyright (C) 2005 - 2017 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
