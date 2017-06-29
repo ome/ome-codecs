@@ -100,7 +100,7 @@
     <dependency>
       <groupId>org.openmicroscopy</groupId>
       <artifactId>ome-common</artifactId>
-      <version>${ome-common.version}</version>
+      <version>5.3.2</version>
     </dependency>
     <dependency>
       <groupId>org.openmicroscopy</groupId>
@@ -124,9 +124,6 @@
 
     <!-- NB: Specify formatting of the maven.build.timestamp property. -->
     <maven.build.timestamp.format>d MMMMM yyyy</maven.build.timestamp.format>
-
-    <ome-common.version>5.3.2</ome-common.version>
-    <imageio.version>5.5.1</imageio.version>
 
     <!-- NB: Override argLine property for extra maven-surefire-plugin args. -->
     <argLine/>
