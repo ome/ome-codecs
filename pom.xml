@@ -7,10 +7,10 @@
 
   <groupId>org.openmicroscopy</groupId>
   <artifactId>ome-codecs</artifactId>
-  <version>6.0.0-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
 
-  <name>OME Common Java</name>
-  <description>Contains common I/O, date parsing, and XML processing classes.</description>
+  <name>OME Codecs</name>
+  <description>Image encoding and decoding routines.</description>
   <url>http://www.openmicroscopy.org/site/products/bio-formats</url>
   <inceptionYear>2005</inceptionYear>
   <organization>
@@ -76,10 +76,10 @@
   </prerequisites>
 
   <scm>
-    <connection>scm:git:https://github.com/ome/ome-codecs-java</connection>
-    <developerConnection>scm:git:git@github.com:ome/ome-codecs-java</developerConnection>
+    <connection>scm:git:https://github.com/ome/ome-codecs</connection>
+    <developerConnection>scm:git:git@github.com:ome/ome-codecs</developerConnection>
     <tag>HEAD</tag>
-    <url>http://github.com/ome/ome-codecs-java</url>
+    <url>http://github.com/ome/ome-codecs</url>
   </scm>
   <issueManagement>
     <system>Trac</system>
@@ -89,19 +89,6 @@
     <system>Jenkins</system>
     <url>https://ci.openmicroscopy.org/</url>
   </ciManagement>
-
-  <repositories>
-    <repository>
-      <id>central</id>
-      <name>Central Repository</name>
-      <url>http://repo.maven.apache.org/maven2</url>
-    </repository>
-    <repository>
-      <id>ome</id>
-      <name>OME Artifactory</name>
-      <url>http://artifacts.openmicroscopy.org/artifactory/maven/</url>
-    </repository>
-  </repositories>
 
   <distributionManagement>
     <snapshotRepository>
@@ -115,40 +102,6 @@
   </distributionManagement>
 
   <dependencies>
-    <dependency>
-     <groupId>com.esotericsoftware.kryo</groupId>
-     <artifactId>kryo</artifactId>
-     <version>2.24.0</version>
-    </dependency>
-    <dependency>
-      <groupId>joda-time</groupId>
-      <artifactId>joda-time</artifactId>
-      <version>2.2</version>
-    </dependency>
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>17.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.7.6</version>
-    </dependency>
-
-    <!-- NB: dependency:analyze has false warning about xml-apis:xml-apis. -->
-
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-core</artifactId>
-      <version>1.1.1</version>
-    </dependency>
-    <dependency>
-      <!-- NB: We want this, despite warning from dependency:analyze. -->
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <version>1.1.1</version>
-    </dependency>
     <dependency>
       <groupId>org.openmicroscopy</groupId>
       <artifactId>ome-jai</artifactId>
