@@ -33,7 +33,7 @@
     <test name="MissingJAIIIOService">
         <groups/>
         <classes>
-            <class name="ome.codecs.utests.MissingJAIIIOServiceTest"/>
+            <class name="ome.codecs.MissingJAIIIOServiceTest"/>
         </classes>
         <packages/>
     </test>

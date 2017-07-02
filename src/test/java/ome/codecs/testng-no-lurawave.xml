@@ -33,7 +33,7 @@
     <test name="MissingLuraWaveService">
         <groups/>
         <classes>
-            <class name="ome.codecs.utests.MissingLuraWaveServiceTest"/>
+            <class name="ome.codecs.MissingLuraWaveServiceTest"/>
         </classes>
         <packages/>
     </test>

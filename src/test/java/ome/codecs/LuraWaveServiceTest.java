@@ -30,7 +30,7 @@
  * #L%
  */
 
-package ome.codecs.utests;
+package ome.codecs;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

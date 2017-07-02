@@ -30,7 +30,7 @@
  * #L%
  */
 
-package ome.codecs.utests;
+package ome.codecs;
 
 import static org.testng.AssertJUnit.assertNotNull;
 import loci.common.services.DependencyException;

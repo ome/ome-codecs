@@ -29,15 +29,15 @@
   POSSIBILITY OF SUCH DAMAGE.
   #L%
   -->
-<suite name="Formats-BSD Unit Tests">
+<suite name="Services Tests">
     <test name="ServiceTests">
         <groups/>
         <classes>
-            <class name="ome.codecs.utests.JAIIIOServiceTest"/>
-            <class name="ome.codecs.utests.LuraWaveServiceTest"/>
+            <class name="ome.codecs.JAIIIOServiceTest"/>
+            <class name="ome.codecs.LuraWaveServiceTest"/>
         </classes>
         <packages>
-            <package name="ome.codecs.utests.xml"/>
+            <package name="ome.codecs.xml"/>
         </packages>
     </test>
 </suite>

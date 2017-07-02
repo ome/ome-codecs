@@ -30,7 +30,7 @@
  * #L%
  */
 
-package ome.codecs.utests;
+package ome.codecs;
 
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
