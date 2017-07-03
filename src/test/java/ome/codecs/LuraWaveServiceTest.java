@@ -30,12 +30,15 @@
  * #L%
  */
 
-package ome.codecs.utests;
+package ome.codecs;
 
-import static org.testng.AssertJUnit.assertNotNull;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
 import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
-import ome.codecs.services.JAIIIOService;
+import ome.codecs.services.LuraWaveService;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -44,9 +47,10 @@ import org.testng.annotations.Test;
  *
  * @author Chris Allan <callan at blackcat dot ca>
  */
-public class MissingJAIIIOServiceTest {
+public class LuraWaveServiceTest {
 
   private ServiceFactory sf;
+  private LuraWaveService service;
 
   @BeforeMethod
   public void setUp() throws DependencyException {
@@ -54,9 +58,10 @@ public class MissingJAIIIOServiceTest {
   }
 
   @Test(expectedExceptions={DependencyException.class})
-  public void testInstantiate() throws DependencyException {
-    JAIIIOService service = sf.getInstance(JAIIIOService.class);
-    assertNotNull(service);
+  public void testInitialize()
+    throws IOException, DependencyException, ServiceException {
+    service = sf.getInstance(LuraWaveService.class);
+    service.initialize(new ByteArrayInputStream(new byte[0]));
   }
 
 }
