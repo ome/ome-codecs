@@ -193,31 +193,29 @@
         </configuration>
         <executions>
           <execution>
-            <id>default-test</id>
+            <id>default-tests</id>
             <phase>test</phase>
             <goals>
               <goal>test</goal>
             </goals>
             <configuration>
               <skip>false</skip>
-              <suiteXmlFiles>
-                <suiteXmlFile>src/test/java/ome/codecs/testng.xml</suiteXmlFile>
-
-              </suiteXmlFiles>
+              <excludes>
+                <exclude>%regex[.*Missing.*Test.*]</exclude>
+              </excludes>
             </configuration>
           </execution>
           <execution>
-            <id>test-no-jai</id>
+            <id>missing-tests</id>
             <phase>test</phase>
             <goals>
               <goal>test</goal>
             </goals>
             <configuration>
               <skip>false</skip>
-              <suiteXmlFiles>
-                <suiteXmlFile>src/test/java/ome/codecs/testng-no-jai.xml</suiteXmlFile>
-
-              </suiteXmlFiles>
+              <includes>
+                <include>%regex[.*Missing.*Test.*]</include>
+              </includes>
               <classpathDependencyExcludes>
                  <classpathDependencyExcludes>org.openmicroscopy:ome-jai</classpathDependencyExcludes>
               </classpathDependencyExcludes>
