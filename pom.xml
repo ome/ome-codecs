@@ -218,6 +218,7 @@
               </includes>
               <classpathDependencyExcludes>
                  <classpathDependencyExcludes>org.openmicroscopy:ome-jai</classpathDependencyExcludes>
+                 <classpathDependencyExcludes>org.openmicroscopy:lwf-stubs</classpathDependencyExcludes>
               </classpathDependencyExcludes>
             </configuration>
           </execution>
