@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  */
-public class JPEGTileDecoder {
+public class JPEGTileDecoder implements AutoCloseable {
 
   // -- Constants --
 
@@ -170,7 +170,9 @@ public class JPEGTileDecoder {
     return consumer.getHeight();
   }
 
-  public void close() {
+  public void close()
+    throws Exception
+  {
     try {
       if (in != null) {
         in.close();
