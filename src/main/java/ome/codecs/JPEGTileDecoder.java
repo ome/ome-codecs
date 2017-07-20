@@ -170,9 +170,7 @@ public class JPEGTileDecoder implements AutoCloseable {
     return consumer.getHeight();
   }
 
-  public void close()
-    throws Exception
-  {
+  public void close() {
     try {
       if (in != null) {
         in.close();
