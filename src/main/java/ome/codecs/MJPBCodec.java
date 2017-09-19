@@ -33,6 +33,7 @@
 package ome.codecs;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import loci.common.RandomAccessInputStream;
 import ome.codecs.CodecException;
@@ -85,6 +86,7 @@ public class MJPBCodec extends BaseCodec {
 
     byte[] raw = null;
     byte[] raw2 = null;
+    ArrayList<Table> huffmanTables = new ArrayList<Table>();
 
     long fp = in.getFilePointer();
 
@@ -93,6 +95,7 @@ public class MJPBCodec extends BaseCodec {
 
       byte[] lumDcBits = null, lumAcBits = null, lumDc = null, lumAc = null;
       byte[] quant = null;
+      byte[] quant2 = null;
 
       String s1 = in.readString(4);
       in.skipBytes(12);
@@ -115,9 +118,15 @@ public class MJPBCodec extends BaseCodec {
 
         if (quantOffset != 0 && quantOffset + fp < in.length()) {
           in.seek(fp + quantOffset);
-          in.skipBytes(3);
+          int length = in.readShort();
+          int index = in.read();
           quant = new byte[64];
           in.read(quant);
+          if (length + fp + quantOffset > in.getFilePointer()) {
+            index = in.read();
+            quant2 = new byte[64];
+            in.read(quant2);
+          }
         }
         else {
           quant = new byte[] {
@@ -130,23 +139,10 @@ public class MJPBCodec extends BaseCodec {
 
         if (huffmanOffset != 0 && huffmanOffset + fp < in.length()) {
           in.seek(fp + huffmanOffset);
-          in.skipBytes(3);
-          lumDcBits = new byte[16];
-          in.read(lumDcBits);
-          lumDc = new byte[12];
-          in.read(lumDc);
-          in.skipBytes(1);
-          lumAcBits = new byte[16];
-          in.read(lumAcBits);
-
-          int sum = 0;
-
-          for (int i=0; i<lumAcBits.length; i++) {
-            sum += lumAcBits[i] & 0xff;
+          int length = in.readShort();
+          while (in.getFilePointer() < fp + huffmanOffset + length) {
+            huffmanTables.add(readTable(in));
           }
-
-          lumAc = new byte[sum];
-          in.read(lumAc);
         }
 
         in.seek(fp + sof + 7);
@@ -217,26 +213,20 @@ public class MJPBCodec extends BaseCodec {
       v.add(quant);
 
       v.add((byte) 1);
-      v.add(quant);
+      v.add(quant2 == null ? quant : quant2);
 
       v.add(new byte[] {(byte) 0xff, (byte) 0xc4});
-      length = (lumDcBits.length + lumDc.length + lumAcBits.length +
-        lumAc.length)*2 + 6;
+      length = 6;
+      for (Table t : huffmanTables) {
+        length += t.content.length;
+      }
       v.add((byte) ((length >>> 8) & 0xff));
       v.add((byte) (length & 0xff));
 
-      v.add((byte) 0);
-      v.add(lumDcBits);
-      v.add(lumDc);
-      v.add((byte) 1);
-      v.add(lumDcBits);
-      v.add(lumDc);
-      v.add((byte) 16);
-      v.add(lumAcBits);
-      v.add(lumAc);
-      v.add((byte) 17);
-      v.add(lumAcBits);
-      v.add(lumAc);
+      for (Table t : huffmanTables) {
+        v.add(t.position);
+        v.add(t.content);
+      }
 
       v.add((byte) 0xff);
       v.add((byte) 0xc0);
@@ -286,9 +276,9 @@ public class MJPBCodec extends BaseCodec {
 
       if (options.bitsPerSample < 40) {
         v.add((byte) 2);
-        v.add((byte) 1);
+        v.add((byte) 0x11);
         v.add((byte) 3);
-        v.add((byte) 1);
+        v.add((byte) 0x11);
       }
 
       v.add((byte) 0);
@@ -332,6 +322,7 @@ public class MJPBCodec extends BaseCodec {
             bottomNdx++;
           }
         }
+
         return result;
       }
       else {
@@ -344,6 +335,27 @@ public class MJPBCodec extends BaseCodec {
     catch (IOException e) {
       throw new CodecException(e);
     }
+  }
+
+  private Table readTable(RandomAccessInputStream s) throws IOException {
+    Table t = new Table();
+    t.position = s.readByte();
+
+    byte[] bits = new byte[16];
+    s.read(bits);
+    int sum = 0;
+    for (byte bit : bits) {
+      sum += (bit & 0xff);
+    }
+    t.content = new byte[bits.length + sum];
+    System.arraycopy(bits, 0, t.content, 0, bits.length);
+    s.read(t.content, bits.length, t.content.length - bits.length);
+    return t;
+  }
+
+  class Table {
+    public byte position;
+    public byte[] content;
   }
 
 }
