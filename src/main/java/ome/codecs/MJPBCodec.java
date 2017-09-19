@@ -216,9 +216,10 @@ public class MJPBCodec extends BaseCodec {
       v.add(quant2 == null ? quant : quant2);
 
       v.add(new byte[] {(byte) 0xff, (byte) 0xc4});
-      length = 6;
+      length = 2;
       for (Table t : huffmanTables) {
         length += t.content.length;
+        length++;
       }
       v.add((byte) ((length >>> 8) & 0xff));
       v.add((byte) (length & 0xff));
