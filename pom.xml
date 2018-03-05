@@ -95,17 +95,17 @@
     <dependency>
       <groupId>org.openmicroscopy</groupId>
       <artifactId>ome-jai</artifactId>
-      <version>0.1.0</version>
+      <version>${ome-jai.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openmicroscopy</groupId>
       <artifactId>ome-common</artifactId>
-      <version>5.3.2</version>
+      <version>${ome-common.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openmicroscopy</groupId>
       <artifactId>lwf-stubs</artifactId>
-      <version>5.3.0</version>
+      <version>${lwf-stubs.version}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -118,6 +118,11 @@
   </dependencies>
 
   <properties>
+    <ome-common.version>5.3.2</ome-common.version>
+    <ome-jai.version>0.1.0</ome-jai.version>
+    <ome-stubs.version>5.3.0</ome-stubs.version>
+    <lwf-stubs.version>${ome-stubs.version}</lwf-stubs.version>
+
     <!-- NB: Avoid platform encoding warning when copying resources. -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
