@@ -34,6 +34,7 @@ package ome.codecs;
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.zip.Deflater;
 import java.util.zip.InflaterInputStream;
 
@@ -82,7 +83,11 @@ public class ZlibCodec extends BaseCodec {
       while ((r = i.read(buf, 0, buf.length)) > 0) bytes.write(buf, 0, r);
     }
     catch (EOFException e) { }
-    return bytes.getBytes();
+    ByteBuffer decompressed = bytes.getByteBuffer();
+    byte[] rtn = new byte[decompressed.position()];
+    decompressed.position(0);
+    decompressed.get(rtn);
+    return rtn;
   }
 
 }
