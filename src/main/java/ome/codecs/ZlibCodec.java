@@ -75,7 +75,7 @@ public class ZlibCodec extends BaseCodec {
     throws CodecException, IOException
   {
     InflaterInputStream i = new InflaterInputStream(in);
-    ByteArrayHandle bytes = new ByteArrayHandle((int) in.length());
+    ByteArrayHandle bytes = new ByteArrayHandle();
     byte[] buf = new byte[8192];
     int r = 0;
     // read until eof reached
