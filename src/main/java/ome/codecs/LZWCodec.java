@@ -92,10 +92,6 @@ public class LZWCodec extends BaseCodec {
   private static final int EOI_CODE = 257;
   private static final int FIRST_CODE = 258;
 
-  /** Masks for writing bits in compressor. */
-  private static final int[] COMPR_MASKS =
-    {0xff, 0x7f, 0x3f, 0x1f, 0x0f, 0x07, 0x03, 0x01};
-
   /** Masks for reading bits in decompressor. */
   private static final int[] DECOMPR_MASKS =
     {0x00, 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f};
@@ -148,7 +144,7 @@ public class LZWCodec extends BaseCodec {
     for (int currInPos=1; currInPos<input.length; currInPos++) {
       int tiffK = input[currInPos] & 0xff;
       int hashKey = (tiffOmega << 8) | tiffK;
-      int hashCode = hashKey * HASH_STEP % HASH_SIZE;
+      int hashCode = (hashKey * HASH_STEP) % HASH_SIZE;
 
       // This loop is guaranteed to terminate because the hash table is larger
       // than the maximum number of codes before a clear.

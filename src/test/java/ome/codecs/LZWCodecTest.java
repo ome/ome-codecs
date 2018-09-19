@@ -53,6 +53,18 @@ public class LZWCodecTest {
   }
 
   @Test
+  public void testCompressShortNonUniqueSequence() throws Exception {
+    byte[] in = "This is the first day of the rest of your life".getBytes(Charset.forName("UTF-8"));
+    byte[] expected = {
+      -128, 21, 13, 6, -109, -104, -126, 8, 32, 58, 26, 12, -94, 3, 49, -92, -28, 115, 58, 8, 12,
+      -122, 19, -56, -128, -34, 102, -124, 66, -124, 7, 35, 44, 66, 45, 24, 60, -101, -50, -89, 33,
+      1, -80, -46, 102, 50, -64, 64
+    };
+    byte[] comp = codec.compress(in, null);
+    assertEquals(expected, comp);
+  }
+
+  @Test
   public void speedCompare() throws Exception {
     byte[] in = new byte[50000];
     new Random().nextBytes(in);
@@ -81,7 +93,6 @@ public class LZWCodecTest {
     for (int j = 0; j < 100; j++) {
       byte[] in = new byte[50000];
       new Random().nextBytes(in);
-      // "This is the first day of the rest of your life".getBytes(Charset.forName("UTF-8"));
       byte[] comp = codec.compress(in, null);
       CodecOptions opt = new CodecOptions();
       opt.maxBytes = in.length;
