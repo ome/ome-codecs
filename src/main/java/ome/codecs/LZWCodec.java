@@ -34,6 +34,7 @@ package ome.codecs;
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import loci.common.RandomAccessInputStream;
@@ -102,6 +103,15 @@ public class LZWCodec extends BaseCodec {
     throws CodecException
   {
     if (input == null || input.length == 0) return input;
+
+/* */
+    ByteBuffer output = compress(null, input, options);
+    byte[] result = new byte[output.position()];
+    output.flip();
+    output.get(result);
+    return result;
+
+/*/
 
     // Output buffer (see class comments for justification of size).
     long bufferSize = ((long) input.length * 141) / 100 + 3;
@@ -244,6 +254,163 @@ public class LZWCodec extends BaseCodec {
     byte[] result = new byte[outSize];
     System.arraycopy(output, 0, result, 0, outSize);
     return result;
+/* */
+  }
+
+  /* @see Codec#compress(ByteBuffer, byte[], CodecOptions) */
+  @Override
+  public ByteBuffer compress(ByteBuffer output, byte[] input, CodecOptions options)
+    throws CodecException
+  {
+    if (input == null || input.length == 0) return ByteBuffer.allocate(0);
+
+    // Output buffer (see class comments for justification of size).
+    long bufferSize = ((long) input.length * 141) / 100 + 3;
+    if (bufferSize > Integer.MAX_VALUE) {
+      throw new CodecException("Output buffer is greater than 2 GB");
+    }
+    byte[] outArray = null;
+    // Current position to write next byte.
+    int outSize = 0;
+    if (output == null || output.remaining() < bufferSize || !output.hasArray()) {
+      outArray = new byte[(int) bufferSize];
+      output = ByteBuffer.wrap(outArray);
+    } else {
+      outArray = output.array();
+      outSize = output.position() + output.arrayOffset();
+    }
+
+    // The outArray always starts with CLEAR code
+    outArray[outSize++] = (byte) (CLEAR_CODE >> 1);
+    // Last incomplete byte to be written to outArray (bits shifted to the right).
+    // There is no point in masking off the already written bits;
+    // they'll just eventually get shifted off the top end of the int.
+    int currOutByte = CLEAR_CODE;
+    // Number of used bits in currOutByte (from 0 to 7).
+    int usedBits = 1;
+
+    // Hash table.
+    // Keys in the table are pairs (code,byte) and values are codes.
+    // Pair (code,byte) is represented as ( (code<<8) | byte ).
+    // Unused table entries have key=-1.
+    int[] htKeys   = new int[HASH_SIZE];
+    int[] htValues = new int[HASH_SIZE];
+    // Initialize hash table: mark all entries as unused
+    Arrays.fill(htKeys, -1);
+
+    // Next code to be used by compressor.
+    int nextCode = FIRST_CODE;
+    // Number of bits to be used to outArray code. Ranges from 9 to 12.
+    int currCodeLength = 9;
+
+    // Names of these variables are taken from TIFF specification.
+    // The first byte of input is handled specially.
+    int tiffOmega = input[0] & 0xff;
+
+    // Main loop.
+  reading:
+    for (int currInPos=1; currInPos<input.length; currInPos++) {
+      int tiffK = input[currInPos] & 0xff;
+      int hashKey = (tiffOmega << 8) | tiffK;
+      int hashCode = (hashKey * HASH_STEP) % HASH_SIZE;
+
+      // This loop is guaranteed to terminate because the hash table is larger
+      // than the maximum number of codes before a clear.
+      while (htKeys[hashCode] >= 0) {
+        if (htKeys[hashCode] == hashKey) {
+          // Omega+K in the table
+          tiffOmega = htValues[hashCode];
+          continue reading;
+        }
+        // Sequential rehashing is just as good as a coprime step
+        // (assuming that the initial hash is reasonably evenly distributed)
+        // and it improves locality of reference.
+        hashCode++;
+        if (hashCode == HASH_SIZE) hashCode = 0;
+      }
+
+      // Omega+K not in the table
+      // 1) add new entry to hash table
+      htKeys[hashCode] = hashKey;
+      htValues[hashCode] = nextCode++;
+      // 2) outArray last code
+      currOutByte = (currOutByte << currCodeLength) | tiffOmega;
+      usedBits += currCodeLength - 8;
+      outArray[outSize++] = (byte)(currOutByte >> usedBits);
+      if (usedBits >= 8) {
+        usedBits -= 8;
+        outArray[outSize++] = (byte)(currOutByte >> usedBits);
+      }
+      // 3) omega = K
+      tiffOmega = tiffK;
+
+      switch (nextCode) {
+        case 512:
+          currCodeLength = 10;
+          break;
+        case 1024:
+          currCodeLength = 11;
+          break;
+        case 2048:
+          currCodeLength = 12;
+          break;
+        case 4096:  // write CLEAR code and reinitialize hash table
+          currOutByte = (currOutByte << currCodeLength) | CLEAR_CODE;
+          usedBits += currCodeLength - 8;
+          outArray[outSize++] = (byte)(currOutByte >> usedBits);
+          if (usedBits >= 8) {
+            usedBits -= 8;
+            outArray[outSize++] = (byte)(currOutByte >> usedBits);
+          }
+          Arrays.fill(htKeys, -1);
+          nextCode = FIRST_CODE;
+          currCodeLength = 9;
+          break;
+      }
+    }
+
+    // End of input:
+    // 1) write code from tiff_Omega
+    {
+      currOutByte = (currOutByte << currCodeLength) | tiffOmega;
+      usedBits += currCodeLength - 8;
+      outArray[outSize++] = (byte)(currOutByte >> usedBits);
+      if (usedBits >= 8) {
+        usedBits -= 8;
+        outArray[outSize++] = (byte)(currOutByte >> usedBits);
+      }
+    }
+    // 2) write END_OF_INFORMATION code
+    //    -- we write the last incomplete byte here as well
+    // !!! We have to increase length of code if needed !!!
+    switch (nextCode) {
+      case 511:
+        currCodeLength = 10;
+        break;
+      case 1023:
+        currCodeLength = 11;
+        break;
+      case 2047:
+        currCodeLength = 12;
+        break;
+    }
+
+    {
+      currOutByte = ((currOutByte << currCodeLength) | EOI_CODE) << 8;
+      usedBits += currCodeLength;
+      outArray[outSize++] = (byte)(currOutByte >> usedBits);
+      if (usedBits >= 8) {
+        usedBits -= 8;
+        outArray[outSize++] = (byte)(currOutByte >> usedBits);
+        if (usedBits >= 8) {
+          usedBits -= 8;
+          outArray[outSize++] = (byte)(currOutByte >> usedBits);
+        }
+      }
+    }
+
+    output.position(outSize - output.arrayOffset());
+    return output;
   }
 
   /**

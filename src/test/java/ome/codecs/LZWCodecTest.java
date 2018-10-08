@@ -32,6 +32,7 @@
 
 package ome.codecs;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Random;
 
@@ -86,6 +87,31 @@ public class LZWCodecTest {
     System.out.println("New time to compress: " + newTime);
     System.out.println("Improvement: " + ((oldTime - newTime) * 100 / oldTime) + "%");
     assertTrue(newTime <= oldTime);
+  }
+
+  @Test
+  public void speedBuffers() throws Exception {
+    byte[] in = new byte[50000];
+    new Random().nextBytes(in);
+
+    long start = System.currentTimeMillis();
+    for (int j = 0; j < 10000; j++) {
+      byte[] comp = codec.compress(in, null);
+    }
+    long arrayTime = System.currentTimeMillis() - start;
+
+    ByteBuffer outBuf = ByteBuffer.allocate(100000);
+    start = System.currentTimeMillis();
+    for (int j = 0; j < 10000; j++) {
+      outBuf.clear();
+      ByteBuffer comp = codec.compress(outBuf, in, null);
+    }
+    long bufferTime = System.currentTimeMillis() - start;
+
+    System.out.println("Array  time to compress: " + arrayTime);
+    System.out.println("Buffer time to compress: " + bufferTime);
+    System.out.println("Improvement: " + ((arrayTime - bufferTime) * 100 / arrayTime) + "%");
+    assertTrue(bufferTime <= arrayTime);
   }
 
   @Test
