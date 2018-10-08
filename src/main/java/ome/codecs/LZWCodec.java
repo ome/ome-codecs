@@ -134,9 +134,9 @@ public class LZWCodec extends BaseCodec {
       outSize = output.position() + output.arrayOffset();
     }
 
-    // The outArray always starts with CLEAR code
+    // The output always starts with CLEAR code
     outArray[outSize++] = (byte) (CLEAR_CODE >> 1);
-    // Last incomplete byte to be written to outArray (bits shifted to the right).
+    // Last incomplete byte to be written to output (bits shifted to the right).
     // There is no point in masking off the already written bits;
     // they'll just eventually get shifted off the top end of the int.
     int currOutByte = CLEAR_CODE;
@@ -154,7 +154,7 @@ public class LZWCodec extends BaseCodec {
 
     // Next code to be used by compressor.
     int nextCode = FIRST_CODE;
-    // Number of bits to be used to outArray code. Ranges from 9 to 12.
+    // Number of bits to be used to output code. Ranges from 9 to 12.
     int currCodeLength = 9;
 
     // Names of these variables are taken from TIFF specification.
@@ -187,7 +187,7 @@ public class LZWCodec extends BaseCodec {
       // 1) add new entry to hash table
       htKeys[hashCode] = hashKey;
       htValues[hashCode] = nextCode++;
-      // 2) outArray last code
+      // 2) output last code
       currOutByte = (currOutByte << currCodeLength) | tiffOmega;
       usedBits += currCodeLength - 8;
       outArray[outSize++] = (byte)(currOutByte >> usedBits);
