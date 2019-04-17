@@ -33,6 +33,8 @@
 package ome.codecs;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.awt.image.WritableRaster;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -110,7 +112,7 @@ public class JPEGCodec extends BaseCodec {
         in.seek(fp);
       }
 
-      b = ImageIO.read(new BufferedInputStream(new DataInputStream(in), 8192));
+      b = ImageIO.read(new BufferedInputStream(new DataInputStream(in), 81920));
     }
     catch (IOException exc) {
       // probably a lossless JPEG; delegate to LosslessJPEGCodec
@@ -119,6 +121,19 @@ public class JPEGCodec extends BaseCodec {
     }
 
     if (options == null) options = CodecOptions.getDefaultOptions();
+
+    int nPixels = b.getWidth() * b.getHeight();
+    WritableRaster r = (WritableRaster) b.getRaster();
+    if (!options.ycbcr && r.getDataBuffer() instanceof DataBufferByte) {
+      DataBufferByte bb = (DataBufferByte) r.getDataBuffer();
+
+      if (bb.getNumBanks() == 1) {
+        byte[] raw = bb.getData();
+        if (options.interleaved || bb.getSize() == nPixels) {
+          return raw;
+        }
+      }
+    }
 
     byte[][] buf = AWTImageTools.getPixelBytes(b, options.littleEndian);
 
