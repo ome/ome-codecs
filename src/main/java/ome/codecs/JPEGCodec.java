@@ -124,7 +124,9 @@ public class JPEGCodec extends BaseCodec {
 
     int nPixels = b.getWidth() * b.getHeight();
     WritableRaster r = (WritableRaster) b.getRaster();
-    if (!options.ycbcr && r.getDataBuffer() instanceof DataBufferByte) {
+    if (!options.ycbcr && r.getDataBuffer() instanceof DataBufferByte &&
+      b.getType() == BufferedImage.TYPE_BYTE_GRAY)
+    {
       DataBufferByte bb = (DataBufferByte) r.getDataBuffer();
 
       if (bb.getNumBanks() == 1) {
