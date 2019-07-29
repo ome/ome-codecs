@@ -192,7 +192,7 @@ public class LosslessJPEGCodec extends BaseCodec {
             if (huffmanTables != null) {
               v = huffman.getSample(bb, huffmanOptions);
               if (nextSample == 0) {
-                v += (int) Math.pow(2, bitsPerSample - 1);
+                v += (int) Math.pow(2, bitsPerSample - pointTransform - 1);
               }
             }
             else {
@@ -215,11 +215,11 @@ public class LosslessJPEGCodec extends BaseCodec {
               componentOffset;
 
             int sampleA = indexA < 0 ? 0 :
-              DataTools.bytesToInt(buf, indexA, bytesPerSample, false);
+              DataTools.bytesToInt(buf, indexA, bytesPerSample, false) >> pointTransform;
             int sampleB = indexB < 0 ? 0 :
-              DataTools.bytesToInt(buf, indexB, bytesPerSample, false);
+              DataTools.bytesToInt(buf, indexB, bytesPerSample, false) >> pointTransform;
             int sampleC = indexC < 0 ? 0 :
-              DataTools.bytesToInt(buf, indexC, bytesPerSample, false);
+              DataTools.bytesToInt(buf, indexC, bytesPerSample, false) >> pointTransform;
 
             if (nextSample > 0) {
               int pred = 0;
@@ -237,13 +237,13 @@ public class LosslessJPEGCodec extends BaseCodec {
                   pred = sampleA + sampleB + sampleC;
                   break;
                 case 5:
-                  pred = sampleA + ((sampleB - sampleC) / 2);
+                  pred = sampleA + ((sampleB - sampleC) >> 1);
                   break;
                 case 6:
-                  pred = sampleB + ((sampleA - sampleC) / 2);
+                  pred = sampleB + ((sampleA - sampleC) >> 1);
                   break;
                 case 7:
-                  pred = (sampleA + sampleB) / 2;
+                  pred = (sampleA + sampleB) >> 1;
                   break;
               }
               v += pred;
@@ -251,7 +251,7 @@ public class LosslessJPEGCodec extends BaseCodec {
 
             int offset = componentOffset + nextSample;
 
-            DataTools.unpackBytes(v, buf, offset, bytesPerSample, false);
+            DataTools.unpackBytes(v << pointTransform, buf, offset, bytesPerSample, false);
           }
           nextSample += bytesPerSample;
         }
