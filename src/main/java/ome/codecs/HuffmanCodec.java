@@ -189,7 +189,7 @@ public class HuffmanCodec extends BaseCodec {
         i += source[start + next++] & 0xff;
       }
 
-      if (level < next && next < LEAVES_OFFSET) {
+      if (level < next && next <= LEAVES_OFFSET) {
         dest.branch[0] = createDecoder(source, start, level + 1);
         dest.branch[1] = createDecoder(source, start, level + 1);
       }
