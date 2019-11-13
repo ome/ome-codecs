@@ -33,6 +33,7 @@
 package ome.codecs;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Random;
 
 import loci.common.RandomAccessInputStream;
@@ -155,6 +156,20 @@ public abstract class BaseCodec implements Codec {
       curPos += data[i].length;
     }
     return compress(toCompress, options);
+  }
+
+  /**
+   * Compress using ByteBuffers.
+   * This implementation just calls the byte array based compression method and wraps the result properly.
+   *
+   * @see Codec#compress(ByteBuffer, byte[], CodecOptions)
+   */
+  @Override
+  public ByteBuffer compress(ByteBuffer target, byte[] data, CodecOptions options)
+    throws CodecException
+  {
+    byte[] out = compress(data, options);
+    return ByteBuffer.wrap(out);
   }
 
   /* @see Codec#decompress(byte[]) */
