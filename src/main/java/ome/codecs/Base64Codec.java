@@ -177,7 +177,6 @@ public class Base64Codec extends BaseCodec {
       }
 
       decodedData.add((byte) (b1 << 2 | b2 >> 4));
-      if (p >= nRead && in.getFilePointer() >= in.length()) break;
       if (marker0 != PAD && marker1 != PAD) {
         b3 = base64Alphabet[marker0];
         b4 = base64Alphabet[marker1];
@@ -185,16 +184,12 @@ public class Base64Codec extends BaseCodec {
         decodedData.add((byte) (((b2 & 0xf) << 4) | ((b3 >> 2) & 0xf)));
         decodedData.add((byte) (b3 << 6 | b4));
       }
-      else if (marker0 == PAD) {
-        decodedData.add((byte) 0);
-        decodedData.add((byte) 0);
-      }
-      else if (marker1 == PAD) {
+      else if (marker0 != PAD && marker1 == PAD) {
         b3 = base64Alphabet[marker0];
 
         decodedData.add((byte) (((b2 & 0xf) << 4) | ((b3 >> 2) & 0xf)));
-        decodedData.add((byte) 0);
       }
+      if (p >= nRead && in.getFilePointer() >= in.length()) break;
       b1 = base64Alphabet[block[p++]];
       b2 = base64Alphabet[block[p++]];
     }
