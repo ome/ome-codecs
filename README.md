@@ -1,6 +1,6 @@
 # OME Codecs
 
-[![Build Status](https://travis-ci.org/ome/ome-codecs.png)](http://travis-ci.org/ome/ome-codecs)
+[![Build Status](https://github.com/ome/ome-codecs/workflows/Maven/badge.svg)](https://github.com/ome/ome-codecs/actions)
 [![Maven Central](https://img.shields.io/maven-central/v/org.openmicroscopy/ome-codecs.svg)](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.openmicroscopy%22%20AND%20a%3A%22ome-codecs%22)
 [![Javadocs](http://javadoc.io/badge/org.openmicroscopy/ome-codecs.svg)](http://javadoc.io/doc/org.openmicroscopy/ome-codecs)
 
