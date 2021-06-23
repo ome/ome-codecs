@@ -118,7 +118,7 @@
   </dependencies>
 
   <properties>
-    <ome-common.version>5.3.2</ome-common.version>
+    <ome-common.version>6.0.7</ome-common.version>
     <ome-jai.version>0.1.0</ome-jai.version>
     <ome-stubs.version>5.3.0</ome-stubs.version>
     <lwf-stubs.version>${ome-stubs.version}</lwf-stubs.version>
