@@ -42,10 +42,15 @@ import java.io.EOFException;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.ImageOutputStream;
+import javax.imageio.stream.MemoryCacheImageInputStream;
+import javax.imageio.stream.MemoryCacheImageOutputStream;
 
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
-import ome.codecs.CodecException;
 import ome.codecs.gui.AWTImageTools;
 
 /**
@@ -82,7 +87,12 @@ public class JPEGCodec extends BaseCodec {
       options.bitsPerSample / 8, false, options.littleEndian, options.signed);
 
     try {
-      ImageIO.write(img, "jpeg", out);
+    	ImageOutputStream stream = new MemoryCacheImageOutputStream(out);
+        ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
+        writer.setOutput(stream);
+        writer.write(img);
+        
+//      ImageIO.write(img, "jpeg", out);
     }
     catch (IOException e) {
       throw new CodecException("Could not write JPEG data", e);
@@ -112,7 +122,11 @@ public class JPEGCodec extends BaseCodec {
         in.seek(fp);
       }
 
-      b = ImageIO.read(new BufferedInputStream(new DataInputStream(in), 81920));
+      ImageInputStream stream = new MemoryCacheImageInputStream(new BufferedInputStream(new DataInputStream(in), 81920));
+      ImageReader reader = ImageIO.getImageReadersByFormatName("jpeg").next();
+      reader.setInput(stream, true, true);
+      b = reader.read(0);
+//      b = ImageIO.read(new BufferedInputStream(new DataInputStream(in), 81920));
     }
     catch (IOException exc) {
       // probably a lossless JPEG; delegate to LosslessJPEGCodec
