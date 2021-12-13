@@ -42,7 +42,6 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
@@ -124,22 +123,11 @@ public class JPEGCodec extends BaseCodec {
       }
 
       ImageInputStream stream = new MemoryCacheImageInputStream(new BufferedInputStream(in, 81920));
-      Iterator<ImageReader> iterator = ImageIO.getImageReadersByFormatName("jpeg");
-      while (iterator.hasNext()) {
-    	  ImageReader reader = iterator.next();
-          reader.setInput(stream, true, true);
-          b = reader.read(0);
-          if (b == null)
-        	  in.seek(fp);
-          else
-        	  break;
-      }
+      b = ImageIO.read(stream);
+      if (b == null)
+    	  throw new NullPointerException("ImageIO returned null when reading JPEG stream");
     }
     catch (IOException exc) {
-      // probably a lossless JPEG; delegate to LosslessJPEGCodec
-    }
-    if (b == null) {
-        in.seek(fp);
         return new LosslessJPEGCodec().decompress(in, options);
     }
 
