@@ -93,9 +93,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.openmicroscopy</groupId>
-      <artifactId>ome-jai</artifactId>
-      <version>${ome-jai.version}</version>
+      <groupId>com.github.jai-imageio</groupId>
+      <artifactId>jai-imageio-jpeg2000</artifactId>
+      <version>1.4.0</version>
     </dependency>
     <dependency>
       <groupId>org.openmicroscopy</groupId>
