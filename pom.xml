@@ -108,12 +108,16 @@
       <version>${lwf-stubs.version}</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
       <version>6.8</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.airlift</groupId>
+      <artifactId>aircompressor</artifactId>
+      <version>0.18</version>
     </dependency>
   </dependencies>
 
