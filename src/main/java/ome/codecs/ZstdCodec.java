@@ -75,7 +75,24 @@ public class ZstdCodec extends BaseCodec {
   {
     return decompress(data, 0, data.length);
   }
-  
+
+  /* @see BaseCodec#decompress(byte[], CodecOptions) */
+  @Override
+  public byte[] decompress(byte[] data, CodecOptions options)
+    throws CodecException
+  {
+    return decompress(data, 0, data.length);
+  }
+
+  /**
+   * Decompresses a block of data of specified length from an initial offset.
+   *
+   * @param data The data to be decompressed.
+   * @param inputOffset The position of the input data at which to begin decompression.
+   * @param length The length of input data to be decompressed.
+   * @return The decompressed data.
+   * @throws CodecException If data is not valid.
+   */
   public byte[] decompress(byte[] data, int inputOffset, int length)
     throws CodecException
   {
