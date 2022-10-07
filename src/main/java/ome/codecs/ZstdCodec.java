@@ -33,8 +33,8 @@
 package ome.codecs;
 
 import loci.common.RandomAccessInputStream;
-import java.io.EOFException;
 import java.io.IOException;
+import io.airlift.compress.MalformedInputException;
 import io.airlift.compress.zstd.ZstdDecompressor;
 
 /**
@@ -44,6 +44,7 @@ import io.airlift.compress.zstd.ZstdDecompressor;
  */
 public class ZstdCodec extends BaseCodec {
 
+  /* @see BaseCodec#compress(byte[], CodecOptions) */
   @Override
   public byte[] compress(byte[] data, CodecOptions options)
     throws CodecException
@@ -54,23 +55,20 @@ public class ZstdCodec extends BaseCodec {
     throw new UnsupportedCompressionException("Zstandard Compression not currently supported.");
   }
 
+  /* @see BaseCodec#decompress(RandomAccessInputStream, CodecOptions) */
   @Override
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws CodecException, IOException
   {
-    ByteVector bytes = new ByteVector();
-    byte[] buf = new byte[8192];
-    int r;
-    // read until eof reached
-    try {
-      while ((r = in.read(buf, 0, buf.length)) > 0) bytes.add(buf, 0, r);
-    }
-    catch (EOFException ignored) { }
-
-    byte[] data = bytes.toByteArray();
+    long byteCount = in.length() - in.getFilePointer();
+    if (byteCount > Integer.MAX_VALUE || byteCount < Integer.MIN_VALUE) 
+      throw new CodecException("Integer overflow detected when calculating file byteCount.");
+    byte[] data = new byte[(int) byteCount];
+    in.readFully(data);
     return decompress(data);
-}
-  
+  }
+
+  /* @see BaseCodec#decompress(byte[]) */
   @Override
   public byte[] decompress(byte[] data)
     throws CodecException
@@ -83,7 +81,12 @@ public class ZstdCodec extends BaseCodec {
   {
     ZstdDecompressor decompressor = new ZstdDecompressor();
     byte[] output = new byte[(int) ZstdDecompressor.getDecompressedSize(data, inputOffset, length)];
-    decompressor.decompress(data, inputOffset, length, output, 0, output.length);
+    try {
+      decompressor.decompress(data, inputOffset, length, output, 0, output.length);
+    } 
+    catch(MalformedInputException e) {
+      throw new CodecException(e);
+    }
     return output;
   }
 }
