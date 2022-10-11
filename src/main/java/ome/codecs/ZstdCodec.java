@@ -61,8 +61,9 @@ public class ZstdCodec extends BaseCodec {
     throws CodecException, IOException
   {
     long byteCount = in.length() - in.getFilePointer();
-    if (byteCount > Integer.MAX_VALUE || byteCount < Integer.MIN_VALUE) 
+    if (byteCount > Integer.MAX_VALUE || byteCount < 0) {
       throw new CodecException("Integer overflow detected when calculating file byteCount.");
+    }
     byte[] data = new byte[(int) byteCount];
     in.readFully(data);
     return decompress(data);
