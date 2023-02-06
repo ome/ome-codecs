@@ -80,7 +80,9 @@ public class JPEGCodec extends BaseCodec {
       throw new CodecException("> 8 bit data cannot be compressed with JPEG.");
     }
 
-    ByteArrayOutputStream out = new ByteArrayOutputStream(Math.max(1024, data.length / 4));
+    int maxByteArrayLength = Integer.MAX_VALUE / 8;
+    ByteArrayOutputStream out = new ByteArrayOutputStream(
+            Math.min(maxByteArrayLength, Math.max(1024, data.length / 4)));
     BufferedImage img = AWTImageTools.makeImage(data, options.width,
       options.height, options.channels, options.interleaved,
       options.bitsPerSample / 8, false, options.littleEndian, options.signed);
@@ -128,6 +130,7 @@ public class JPEGCodec extends BaseCodec {
     	  throw new NullPointerException("ImageIO returned null when reading JPEG stream");
     }
     catch (IOException exc) {
+        in.seek(fp);
         return new LosslessJPEGCodec().decompress(in, options);
     }
 
