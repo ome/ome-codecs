@@ -48,6 +48,14 @@ import loci.common.RandomAccessInputStream;
 import ome.codecs.CodecException;
 import ome.codecs.gui.AWTImageTools;
 
+//::phaub 09.02.23
+import javax.imageio.IIOImage;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
+import javax.imageio.IIOException;
+
+
 /**
  * This class implements JPEG compression and decompression.
  */
@@ -82,7 +90,47 @@ public class JPEGCodec extends BaseCodec {
       options.bitsPerSample / 8, false, options.littleEndian, options.signed);
 
     try {
-      ImageIO.write(img, "jpeg", out);
+      //ImageIO.write(img, "jpeg", out);
+        
+      //::phaub 09.02.23   (Adjustable jpeg quality)
+      	
+      // How to use:
+      // Set jpegquality as system property in the calling object (e.g. QuPath using OMEPyramidWriter()):
+      //   String OME_JPEGQUALITY = "ome.codec.jpegquality";
+      //   double jpegquality = 0.95;
+      //   System.setProperty(OME_JPEGQUALITY, String.valueOf( jpegquality ));
+    	    	
+      String OME_JPEGQUALITY = "ome.codec.jpegquality";
+    	  
+      double jpegquality = 0.75;
+      String sJPEGQuality = System.getProperty(OME_JPEGQUALITY, null);
+      if (sJPEGQuality != null)
+          jpegquality = Double.parseDouble(sJPEGQuality);
+      jpegquality = Math.max(0.25, Math.min(1.0, jpegquality));
+    	
+      ImageWriter jpgWriter = ImageIO.getImageWritersByFormatName("jpg").next();
+      if (jpgWriter == null) {
+          return null;
+      }
+      ImageWriteParam jpgWriteParam = jpgWriter.getDefaultWriteParam();
+      jpgWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+      jpgWriteParam.setCompressionQuality((float) jpegquality);
+      
+      ImageOutputStream stream = ImageIO.createImageOutputStream(out);
+      if (stream == null) {
+          throw new IIOException("Can't create an ImageOutputStream!");
+      }
+        
+      jpgWriter.setOutput(stream);
+        
+      try {
+          IIOImage outputImage = new IIOImage(img, null, null);
+          jpgWriter.write(null, outputImage, jpgWriteParam);
+      } finally {
+          jpgWriter.dispose();
+          stream.flush(); 	      
+          stream.close();
+      }          
     }
     catch (IOException e) {
       throw new CodecException("Could not write JPEG data", e);
