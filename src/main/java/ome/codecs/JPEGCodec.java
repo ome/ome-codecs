@@ -37,15 +37,19 @@ import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
+import java.util.Iterator;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.ImageOutputStream;
+import javax.imageio.stream.MemoryCacheImageInputStream;
+import javax.imageio.stream.MemoryCacheImageOutputStream;
 
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
-import ome.codecs.CodecException;
 import ome.codecs.gui.AWTImageTools;
 
 /**
@@ -76,13 +80,21 @@ public class JPEGCodec extends BaseCodec {
       throw new CodecException("> 8 bit data cannot be compressed with JPEG.");
     }
 
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    int maxByteArrayLength = Integer.MAX_VALUE / 8;
+    ByteArrayOutputStream out = new ByteArrayOutputStream(
+            Math.min(maxByteArrayLength, Math.max(1024, data.length / 4)));
     BufferedImage img = AWTImageTools.makeImage(data, options.width,
       options.height, options.channels, options.interleaved,
       options.bitsPerSample / 8, false, options.littleEndian, options.signed);
 
     try {
-      ImageIO.write(img, "jpeg", out);
+    	ImageOutputStream stream = new MemoryCacheImageOutputStream(out);
+    	Iterator<ImageWriter> iterator = ImageIO.getImageWritersByFormatName("jpeg");
+    	if (iterator.hasNext()) {
+	        ImageWriter writer = iterator.next();
+	        writer.setOutput(stream);
+	        writer.write(img);
+    	}
     }
     catch (IOException e) {
       throw new CodecException("Could not write JPEG data", e);
@@ -101,7 +113,7 @@ public class JPEGCodec extends BaseCodec {
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws CodecException, IOException
   {
-    BufferedImage b;
+    BufferedImage b = null;
     long fp = in.getFilePointer();
     try {
       try {
@@ -112,12 +124,14 @@ public class JPEGCodec extends BaseCodec {
         in.seek(fp);
       }
 
-      b = ImageIO.read(new BufferedInputStream(new DataInputStream(in), 81920));
+      ImageInputStream stream = new MemoryCacheImageInputStream(new BufferedInputStream(in, 81920));
+      b = ImageIO.read(stream);
+      if (b == null)
+    	  throw new NullPointerException("ImageIO returned null when reading JPEG stream");
     }
     catch (IOException exc) {
-      // probably a lossless JPEG; delegate to LosslessJPEGCodec
-      in.seek(fp);
-      return new LosslessJPEGCodec().decompress(in, options);
+        in.seek(fp);
+        return new LosslessJPEGCodec().decompress(in, options);
     }
 
     if (options == null) options = CodecOptions.getDefaultOptions();
@@ -141,9 +155,10 @@ public class JPEGCodec extends BaseCodec {
 
     // correct for YCbCr encoding, if necessary
     if (options.ycbcr && buf.length == 3) {
-      int nBytes = buf[0].length / (b.getWidth() * b.getHeight());
+      int n = buf[0].length;
+      int nBytes = n / (b.getWidth() * b.getHeight());
       int mask = (int) (Math.pow(2, nBytes * 8) - 1);
-      for (int i=0; i<buf[0].length; i+=nBytes) {
+      for (int i=0; i<n; i+=nBytes) {
         double y = DataTools.bytesToInt(buf[0], i, nBytes, options.littleEndian);
         double cb = DataTools.bytesToInt(buf[1], i, nBytes, options.littleEndian);
         double cr = DataTools.bytesToInt(buf[2], i, nBytes, options.littleEndian);
@@ -169,12 +184,16 @@ public class JPEGCodec extends BaseCodec {
     if (buf.length == 1) rtn = buf[0];
     else {
       if (options.interleaved) {
-        int next = 0;
-        for (int i=0; i<buf[0].length; i++) {
-          for (int j=0; j<buf.length; j++) {
-            rtn[next++] = buf[j][i];
-          }
-        }
+    	  int channels = buf.length;
+    	  for (int j=0; j<channels; j++) {
+    		  byte[] bufChannel = buf[j];
+    		  int n = bufChannel.length;
+    		  int next = j;
+    		  for (int i=0; i<n; i++) {
+    			  rtn[next] = bufChannel[i];
+    			  next += channels;
+    		  }
+    	  }
       }
       else {
         for (int i=0; i<buf.length; i++) {
