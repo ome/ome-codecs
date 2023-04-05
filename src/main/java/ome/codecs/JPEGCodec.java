@@ -103,9 +103,9 @@ public class JPEGCodec extends BaseCodec {
       String OME_JPEGQUALITY = "ome.codec.jpegquality";
     	  
       double jpegquality = 0.75;
-      String sJPEGQuality = System.getProperty(OME_JPEGQUALITY, null);
-      if (sJPEGQuality != null)
-          jpegquality = Double.parseDouble(sJPEGQuality);
+      if (options.quality > 0) {
+        jpegquality = options.quality;
+      }
       jpegquality = Math.max(0.25, Math.min(1.0, jpegquality));
     	
       ImageWriter jpgWriter = ImageIO.getImageWritersByFormatName("jpg").next();
