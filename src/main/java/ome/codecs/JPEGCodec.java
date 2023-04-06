@@ -97,7 +97,6 @@ public class JPEGCodec extends BaseCodec {
 
     try {
       //::phaub 09.02.23   (Adjustable jpeg quality)
-      	
       // How to use:
       // Set jpegquality using CodecOptions in the calling object (e.g. QuPath using OMEPyramidWriter()):
       //   CodecOptions options = new CodecOptions();
@@ -112,7 +111,7 @@ public class JPEGCodec extends BaseCodec {
     	
       ImageWriter jpgWriter = ImageIO.getImageWritersByFormatName("jpg").next();
       if (jpgWriter == null) {
-          return null;
+        return null;
       }
       ImageWriteParam jpgWriteParam = jpgWriter.getDefaultWriteParam();
       jpgWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
@@ -121,16 +120,16 @@ public class JPEGCodec extends BaseCodec {
       ImageOutputStream stream = new MemoryCacheImageOutputStream(out);
       try {
         Iterator<ImageWriter> iterator = ImageIO.getImageWritersByFormatName("jpeg");
-    	  if (iterator.hasNext()) {
-	        ImageWriter writer = iterator.next();
-	        writer.setOutput(stream);
+    	if (iterator.hasNext()) {
+	  ImageWriter writer = iterator.next();
+	  writer.setOutput(stream);
           IIOImage outputImage = new IIOImage(img, null, null);
-	        writer.write(null, outputImage, jpgWriteParam);
+	  writer.write(null, outputImage, jpgWriteParam);
         }
       } finally {
-          jpgWriter.dispose();
-          stream.flush(); 	      
-          stream.close();
+        jpgWriter.dispose();
+        stream.flush(); 	      
+        stream.close();
       }          
     }
     catch (IOException e) {
