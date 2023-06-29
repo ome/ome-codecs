@@ -55,9 +55,13 @@ import ome.codecs.gui.AWTImageTools;
 //::phaub 09.02.23
 import javax.imageio.IIOImage;
 import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageOutputStream;
-import javax.imageio.IIOException;
+
+//::phaub 29.06.23
+import javax.imageio.ImageTypeSpecifier;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.NamedNodeMap;
+import javax.imageio.metadata.IIOMetadata;
 
 
 /**
@@ -108,7 +112,18 @@ public class JPEGCodec extends BaseCodec {
         jpegquality = options.quality;
       }
       jpegquality = Math.max(0.25, Math.min(1.0, jpegquality));
-    	
+	    
+      //::phaub 29.06.23   (Disable chroma subsampling)
+      // How to use:
+      // Set disableChromaSubsampling using CodecOptions in the calling object (e.g. QuPath using OMEPyramidWriter()):
+      //   CodecOptions options = new CodecOptions();
+      //   options.disableChromaSubsampling = true;
+      //   writer.setCodecOptions(options)
+      boolean disableChromaSubsampling = jpegquality>=90; 
+      if (options.disableChromaSubsampling) {
+        disableChromaSubsampling = options.disableChromaSubsampling;
+      }
+	
       ImageWriter jpgWriter = ImageIO.getImageWritersByFormatName("jpg").next();
       if (jpgWriter == null) {
         return null;
@@ -116,6 +131,8 @@ public class JPEGCodec extends BaseCodec {
       ImageWriteParam jpgWriteParam = jpgWriter.getDefaultWriteParam();
       jpgWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
       jpgWriteParam.setCompressionQuality((float) jpegquality);
+      if (jpegquality == 1.0)
+        jpgWriteParam.setSourceSubsampling(1, 1, 0, 0);
       
       ImageOutputStream stream = new MemoryCacheImageOutputStream(out);
       try {
@@ -123,7 +140,13 @@ public class JPEGCodec extends BaseCodec {
     	if (iterator.hasNext()) {
 	  ImageWriter writer = iterator.next();
 	  writer.setOutput(stream);
-          IIOImage outputImage = new IIOImage(img, null, null);
+
+         IIOImage outputImage = null;
+         if (!disableChromaSubsampling)  // Use chroma subsampling YUV420
+           outputImage = new IIOImage(img, null, null);
+         else
+           outputImage = createIIOImageNoChromaSubsampling(jpgWriter, img, jpgWriteParam);
+		
 	  writer.write(null, outputImage, jpgWriteParam);
         }
       } finally {
@@ -138,6 +161,58 @@ public class JPEGCodec extends BaseCodec {
     return out.toByteArray();
   }
 
+  /**
+   * Create an IIOImage object with disabled chroma subsampling.
+   */
+  private IIOImage createIIOImageNoChromaSubsampling(ImageWriter jpgWriter, BufferedImage img, ImageWriteParam jpgWriteParam)
+    throws CodecException {
+    // Disable JPEG chroma subsampling
+    // http://svn.apache.org/repos/asf/shindig/trunk/java/gadgets/src/main/java/org/apache/shindig/gadgets/rewrite/image/BaseOptimizer.java
+    // http://svn.apache.org/repos/asf/shindig/trunk/java/gadgets/src/main/java/org/apache/shindig/gadgets/rewrite/image/JpegImageUtils.java
+    // Peter Haub, June. 2023
+    try {
+      IIOMetadata metadata = jpgWriter.getDefaultImageMetadata(new ImageTypeSpecifier(img.getColorModel(), img.getSampleModel()), jpgWriteParam);
+      Node rootNode = metadata!=null ? metadata.getAsTree("javax_imageio_jpeg_image_1.0") : null;
+      boolean metadataUpdated = false;
+      // The top level root node has two children, out of which the second one will
+      // contain all the information related to image markers.
+      if (rootNode!=null && rootNode.getLastChild() != null) {
+        Node markerNode = rootNode.getLastChild();
+        NodeList markers = markerNode.getChildNodes();
+        // Search for 'SOF' marker where subsampling information is stored.
+        for (int i = 0; i < markers.getLength(); i++) {
+          Node node = markers.item(i);
+          // 'SOF' marker can have
+          //   1 child node if the color representation is greyscale,
+          //   3 child nodes if the color representation is YCbCr, and
+          //   4 child nodes if the color representation is YCMK.
+          // This subsampling applies only to YCbCr.
+          if (node.getNodeName().equalsIgnoreCase("sof") && node.hasChildNodes() && node.getChildNodes().getLength() == 3) {
+            // In 'SOF' marker, first child corresponds to the luminance channel, and setting
+            // the HsamplingFactor and VsamplingFactor to 1, will imply 4:4:4 chroma subsampling.
+            NamedNodeMap attrMap = node.getFirstChild().getAttributes();
+            // SamplingModes: UNKNOWN(-2), DEFAULT(-1), YUV444(17), YUV422(33), YUV420(34), YUV411(65)
+            int samplingmode = 17;   // YUV444
+            attrMap.getNamedItem("HsamplingFactor").setNodeValue((samplingmode & 0xf) + "");
+            attrMap.getNamedItem("VsamplingFactor").setNodeValue(((samplingmode >> 4) & 0xf) + "");
+            metadataUpdated = true;
+            break;
+          }
+        }
+      }
+      // Read the updated metadata from the metadata node tree.
+      if (metadataUpdated)
+        metadata.setFromTree("javax_imageio_jpeg_image_1.0", rootNode);
+
+      IIOImage iioImage = new IIOImage(img, null, metadata);
+      
+      return iioImage;
+    }
+    catch (IOException e) {
+        throw new CodecException("Could not create IIOImage object with disbaled chroma subsampling", e);
+      }
+  }
+	
   /**
    * The CodecOptions parameter should have the following fields set:
    *  {@link CodecOptions#interleaved interleaved}
