@@ -117,7 +117,7 @@ public class JPEGCodec extends BaseCodec {
       //   CodecOptions options = new CodecOptions();
       //   options.disableChromaSubsampling = true;
       //   writer.setCodecOptions(options)
-      boolean disableChromaSubsampling = jpegquality>=90; 
+      boolean disableChromaSubsampling = jpegquality>=0.9; 
       if (options.disableChromaSubsampling) {
         disableChromaSubsampling = options.disableChromaSubsampling;
       }
