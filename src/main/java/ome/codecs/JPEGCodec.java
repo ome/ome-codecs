@@ -52,11 +52,9 @@ import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import ome.codecs.gui.AWTImageTools;
 
-//::phaub 09.02.23
 import javax.imageio.IIOImage;
 import javax.imageio.ImageWriteParam;
 
-//::phaub 29.06.23
 import javax.imageio.ImageTypeSpecifier;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -100,7 +98,7 @@ public class JPEGCodec extends BaseCodec {
       options.bitsPerSample / 8, false, options.littleEndian, options.signed);
 
     try {
-      //::phaub 09.02.23   (Adjustable jpeg quality)
+      // Adjustable jpeg quality
       // How to use:
       // Set jpegquality using CodecOptions in the calling object (e.g. QuPath using OMEPyramidWriter()):
       //   CodecOptions options = new CodecOptions();
@@ -113,7 +111,7 @@ public class JPEGCodec extends BaseCodec {
       }
       jpegquality = Math.max(0.25, Math.min(1.0, jpegquality));
 	    
-      //::phaub 29.06.23   (Disable chroma subsampling)
+      // Disable chroma subsampling
       // How to use:
       // Set disableChromaSubsampling using CodecOptions in the calling object (e.g. QuPath using OMEPyramidWriter()):
       //   CodecOptions options = new CodecOptions();
@@ -168,8 +166,7 @@ public class JPEGCodec extends BaseCodec {
     throws CodecException {
     // Disable JPEG chroma subsampling
     // http://svn.apache.org/repos/asf/shindig/trunk/java/gadgets/src/main/java/org/apache/shindig/gadgets/rewrite/image/BaseOptimizer.java
-    // http://svn.apache.org/repos/asf/shindig/trunk/java/gadgets/src/main/java/org/apache/shindig/gadgets/rewrite/image/JpegImageUtils.java
-    // Peter Haub, June. 2023
+    // http://svn.apache.org/repos/asf/shindig/trunk/java/gadgets/src/main/java/org/apache/shindig/gadgets/rewrite/image/JpegImageUtils.java  
     try {
       IIOMetadata metadata = jpgWriter.getDefaultImageMetadata(new ImageTypeSpecifier(img.getColorModel(), img.getSampleModel()), jpgWriteParam);
       Node rootNode = metadata!=null ? metadata.getAsTree("javax_imageio_jpeg_image_1.0") : null;
