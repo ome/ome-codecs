@@ -116,7 +116,7 @@
   </dependencies>
 
   <properties>
-    <ome-common.version>6.0.18</ome-common.version>
+    <ome-common.version>6.0.19</ome-common.version>
     <ome-jai.version>0.1.3</ome-jai.version>
 
     <!-- NB: Avoid platform encoding warning when copying resources. -->
