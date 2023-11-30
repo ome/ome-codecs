@@ -116,6 +116,11 @@ public class CodecOptions {
    * Whether or not the decompressed data will be stored as YCbCr.
    */
   public boolean ycbcr;
+  
+  /**
+   * Whether or not use chroma subsampling.
+   */
+  public boolean disableChromaSubsampling;
 
   // -- Constructors --
 
