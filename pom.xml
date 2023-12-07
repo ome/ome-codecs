@@ -7,7 +7,7 @@
 
   <groupId>org.openmicroscopy</groupId>
   <artifactId>ome-codecs</artifactId>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.0.1</version>
 
   <name>OME Codecs</name>
   <description>Image encoding and decoding routines.</description>
