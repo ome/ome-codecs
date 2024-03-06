@@ -103,6 +103,12 @@
       <version>${ome-common.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>${testng.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>io.airlift</groupId>
       <artifactId>aircompressor</artifactId>
       <version>0.21</version>
@@ -412,28 +418,18 @@
       <activation>
         <jdk>(,11)</jdk>
       </activation>
-      <dependencies>
-        <dependency>
-          <groupId>org.testng</groupId>
-          <artifactId>testng</artifactId>
-          <version>7.5</version>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
+      <properties>
+        <testng.version>7.5</testng.version>
+      </properties>
     </profile>
     <profile>
       <id>jdk11+</id>
       <activation>
         <jdk>[11,)</jdk>
       </activation>
-      <dependencies>
-        <dependency>
-          <groupId>org.testng</groupId>
-          <artifactId>testng</artifactId>
-          <version>7.9.0</version>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
+      <properties>
+        <testng.version>7.9.0</testng.version>
+      </properties>
     </profile>
   </profiles>
 </project>
