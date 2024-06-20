@@ -102,15 +102,21 @@ public class JPEGCodec extends BaseCodec {
       // How to use:
       // Set jpegquality using CodecOptions in the calling object (e.g. QuPath using OMEPyramidWriter()):
       //   CodecOptions options = new CodecOptions();
-      //   options.quality = "0.95";
+      //   options.quality = 0.95;
       //   writer.setCodecOptions(options)
-    	  
+
       double jpegquality = 0.75;
       if (options.quality > 0) {
         jpegquality = options.quality;
       }
+      if (jpegquality < 0.25) {
+        LOGGER.warn("JPEG quality {} too small, using 0.25", jpegquality);
+      }
+      else if (jpegquality > 1) {
+        LOGGER.warn("JPEG quality {} too large, using 1.0", jpegquality);
+      }
       jpegquality = Math.max(0.25, Math.min(1.0, jpegquality));
-	    
+
       // Disable chroma subsampling
       // How to use:
       // Set disableChromaSubsampling using CodecOptions in the calling object (e.g. QuPath using OMEPyramidWriter()):
