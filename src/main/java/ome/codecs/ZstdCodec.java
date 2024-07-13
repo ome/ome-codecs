@@ -32,13 +32,16 @@
 
 package ome.codecs;
 
-import loci.common.RandomAccessInputStream;
-import java.io.IOException;
 import io.airlift.compress.MalformedInputException;
+import io.airlift.compress.zstd.ZstdCompressor;
 import io.airlift.compress.zstd.ZstdDecompressor;
+import loci.common.RandomAccessInputStream;
+
+import java.io.IOException;
+import java.util.Arrays;
 
 /**
- * This class implements Zstandard decompression.
+ * This class implements Zstandard compression and decompression.
  *
  * @author Wim Pomp w.pomp at nki.nl
  */
@@ -51,8 +54,11 @@ public class ZstdCodec extends BaseCodec {
   {
     if (data == null || data.length == 0)
       throw new IllegalArgumentException("No data to compress");
-    // TODO: Add compression support.
-    throw new UnsupportedCompressionException("Zstandard Compression not currently supported.");
+    ZstdCompressor compressor = new ZstdCompressor();
+    int maxLength = compressor.maxCompressedLength(data.length);
+    byte[] output = new byte[maxLength];
+    int len = compressor.compress(data, 0, data.length, output, 0, output.length);
+    return Arrays.copyOfRange(output, 0, len);
   }
 
   /* @see BaseCodec#decompress(RandomAccessInputStream, CodecOptions) */
