@@ -88,7 +88,7 @@
   </dependencies>
 
   <properties>
-    <ome-common.version>6.3.0</ome-common.version>
+    <ome-common.version>7.0.0</ome-common.version>
     <ome-jai.version>0.1.5</ome-jai.version>
     <testng.version>7.9.0</testng.version>
 
